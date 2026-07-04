@@ -1,0 +1,1 @@
+web: gunicorn voterx.wsgi:application

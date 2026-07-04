@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In — VoterX Communications{% endblock %}
+
+{% block content %}
+<div style="min-height:calc(100vh - 72px); background:var(--navy); display:flex; align-items:center; justify-content:center; padding:4rem 1.5rem; position:relative; overflow:hidden;">
+
+  <div style="position:absolute; inset:0; background-image:linear-gradient(rgba(249,115,22,0.05) 1px, transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.05) 1px, transparent 1px); background-size:50px 50px;"></div>
+  <div style="position:absolute; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(249,115,22,0.12) 0%,transparent 70%); top:-100px; right:-100px; pointer-events:none;"></div>
+
+  <div style="position:relative; z-index:2; width:100%; max-width:440px;">
+
+    <div style="text-align:center; margin-bottom:2rem;">
+      <a href="{% url 'home' %}" style="font-family:'Manrope',sans-serif; font-weight:900; font-size:1.75rem; color:white; text-decoration:none;">
+        <span style="color:var(--orange);">●</span> VoterX
+      </a>
+    </div>
+
+    <div style="background:white; border-radius:var(--radius); padding:2.5rem; box-shadow:0 24px 80px rgba(0,0,0,0.3);">
+      <h1 style="font-size:1.75rem; margin:0 0 0.5rem; color:var(--navy);">Welcome back</h1>
+      <p style="color:#64748B; font-size:0.9rem; margin:0 0 2rem;">Sign in to your VoterX account</p>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" name="email" class="form-input" placeholder="you@company.co.ke" required autofocus>
+        </div>
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+        </div>
+
+        <div style="text-align:right; margin-bottom:1.75rem;">
+          <a href="#" style="color:var(--orange); font-size:0.85rem; text-decoration:none; font-weight:600;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary" style="display:block; width:100%; padding:1rem; font-size:1rem; text-align:center; border:none; cursor:pointer;">
+          Sign In →
+        </button>
+      </form>
+
+      <div style="text-align:center; margin-top:1.75rem; color:#64748B; font-size:0.875rem;">
+        Don't have an account?
+        <a href="{% url 'register' %}" style="color:var(--orange); font-weight:700; text-decoration:none; margin-left:4px;">Create one free</a>
+      </div>
+
+      <div style="border-top:1px solid #F1F5F9; margin-top:1.5rem; padding-top:1.25rem; text-align:center;">
+        <a href="{% url 'admin_dashboard' %}" style="display:inline-flex; align-items:center; gap:6px; color:#94A3B8; font-size:0.78rem; text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='#94A3B8'">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Admin Panel
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

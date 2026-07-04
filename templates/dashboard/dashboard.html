@@ -1,0 +1,538 @@
+{% extends 'base.html' %} 
+{% block title %}Dashboard — VoterX Communications{% endblock %} 
+
+{% block content %}
+<div
+  style="
+    background: var(--navy);
+    padding: 3rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+  "
+>
+  <div
+    style="
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    "
+  ></div>
+  <div class="container" style="position: relative; z-index: 2">
+    <div class="badge badge-white">My Account</div>
+    <h1 style="color: white; font-size: 2.2rem; margin: 0 0 0.5rem">
+      Welcome, <span style="color: var(--orange)">{{ user.first_name }}</span>
+    </h1>
+    <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem">
+      {{ user.email }}
+    </p>
+  </div>
+</div>
+
+<section class="section-pad section-light">
+  <div class="container">
+    <!-- Quick stats -->
+    <div
+      class="grid-4"
+      style="margin-bottom: 3rem; grid-template-columns: repeat(4, 1fr)"
+    >
+      <div
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.75rem;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          border-left: 4px solid var(--orange);
+        "
+      >
+        <div
+          style="
+            font-family: &quot;Manrope&quot;, sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--orange);
+            margin-bottom: 4px;
+          "
+        >
+          {{ orders|length }}
+        </div>
+        <div style="color: #64748b; font-size: 0.875rem">Total Orders</div>
+      </div>
+      <div
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.75rem;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          border-left: 4px solid #22c55e;
+        "
+      >
+        <div
+          style="
+            font-family: &quot;Manrope&quot;, sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #22c55e;
+            margin-bottom: 4px;
+          "
+        >
+          {{ orders|length }}
+        </div>
+        <div style="color: #64748b; font-size: 0.875rem">Completed</div>
+      </div>
+      <div
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.75rem;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          border-left: 4px solid #3b82f6;
+        "
+      >
+        <div
+          style="
+            font-family: &quot;Manrope&quot;, sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #3b82f6;
+            margin-bottom: 4px;
+          "
+        >
+          0
+        </div>
+        <div style="color: #64748b; font-size: 0.875rem">In Progress</div>
+      </div>
+      <div
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.75rem;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          border-left: 4px solid #f59e0b;
+        "
+      >
+        <div
+          style="
+            font-family: &quot;Manrope&quot;, sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #f59e0b;
+            margin-bottom: 4px;
+          "
+        >
+          KES {% if orders %}{{ orders.0.total_amount|floatformat:0 }}{% else
+          %}0{% endif %}
+        </div>
+        <div style="color: #64748b; font-size: 0.875rem">Latest Order</div>
+      </div>
+    </div>
+
+    <!-- Orders table -->
+    <div
+      style="
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          padding: 1.75rem 2rem;
+          border-bottom: 1px solid #f1f5f9;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <h2 style="font-size: 1.2rem; margin: 0">Order History</h2>
+        <a
+          href="{% url 'product_list' %}"
+          class="btn-primary"
+          style="padding: 0.5rem 1.25rem; font-size: 0.85rem"
+          >+ New Order</a
+        >
+      </div>
+
+      {% if orders %}
+      <div style="overflow-x: auto">
+        <table style="width: 100%; border-collapse: collapse">
+          <thead>
+            <tr style="background: #f8fafc">
+              <th
+                style="
+                  padding: 1rem 1.5rem;
+                  text-align: left;
+                  font-family: &quot;Manrope&quot;, sans-serif;
+                  font-size: 0.78rem;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Order ID
+              </th>
+              <th
+                style="
+                  padding: 1rem 1.5rem;
+                  text-align: left;
+                  font-family: &quot;Manrope&quot;, sans-serif;
+                  font-size: 0.78rem;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Date
+              </th>
+              <th
+                style="
+                  padding: 1rem 1.5rem;
+                  text-align: left;
+                  font-family: &quot;Manrope&quot;, sans-serif;
+                  font-size: 0.78rem;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Items
+              </th>
+              <th
+                style="
+                  padding: 1rem 1.5rem;
+                  text-align: left;
+                  font-family: &quot;Manrope&quot;, sans-serif;
+                  font-size: 0.78rem;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Total
+              </th>
+              <th
+                style="
+                  padding: 1rem 1.5rem;
+                  text-align: left;
+                  font-family: &quot;Manrope&quot;, sans-serif;
+                  font-size: 0.78rem;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Installation
+              </th>
+              <th
+                style="
+                  padding: 1rem 1.5rem;
+                  text-align: left;
+                  font-family: &quot;Manrope&quot;, sans-serif;
+                  font-size: 0.78rem;
+                  font-weight: 700;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.08em;
+                "
+              >
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr
+              style="
+                border-bottom: 1px solid #f8fafc;
+                transition: background 0.2s;
+              "
+              onmouseover="this.style.background = '#FAFBFF'"
+              onmouseout="this.style.background = 'transparent'"
+            >
+              <td style="padding: 1.25rem 1.5rem">
+                <span
+                  style="
+                    font-family: &quot;Manrope&quot;, sans-serif;
+                    font-weight: 700;
+                    color: var(--orange);
+                  "
+                  >#{{ order.id }}</span
+                >
+              </td>
+              <td
+                style="
+                  padding: 1.25rem 1.5rem;
+                  color: #475569;
+                  font-size: 0.875rem;
+                "
+              >
+                {{ order.created_at|date:"d M Y" }}
+              </td>
+              <td
+                style="
+                  padding: 1.25rem 1.5rem;
+                  color: #475569;
+                  font-size: 0.875rem;
+                "
+              >
+                {{ order.items.count }} item{{ order.items.count|pluralize }}
+              </td>
+              <td style="padding: 1.25rem 1.5rem">
+                <span
+                  style="
+                    font-family: &quot;Manrope&quot;, sans-serif;
+                    font-weight: 700;
+                    color: var(--navy);
+                  "
+                  >KES {{ order.total_amount|floatformat:0 }}</span
+                >
+              </td>
+              <td style="padding: 1.25rem 1.5rem">
+                {% if order.needs_installation %}
+                <span
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 5px;
+                    background: rgba(249, 115, 22, 0.1);
+                    color: var(--orange);
+                    border-radius: 20px;
+                    padding: 0.25rem 0.65rem;
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    font-family: &quot;Manrope&quot;, sans-serif;
+                  "
+                >
+                  ✓ Yes
+                </span>
+                {% else %}
+                <span style="color: #94a3b8; font-size: 0.85rem">No</span>
+                {% endif %}
+              </td>
+              <td style="padding: 1.25rem 1.5rem">
+                <span
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    background: rgba(249, 115, 22, 0.1);
+                    color: var(--orange);
+                    border-radius: 20px;
+                    padding: 0.3rem 0.8rem;
+                    font-size: 0.78rem;
+                    font-weight: 700;
+                    font-family: &quot;Manrope&quot;, sans-serif;
+                  "
+                >
+                  <span
+                    style="
+                      width: 6px;
+                      height: 6px;
+                      border-radius: 50%;
+                      background: var(--orange);
+                    "
+                  ></span>
+                  Processing
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div style="text-align: center; padding: 5rem 2rem; color: #94a3b8">
+        <div style="font-size: 3.5rem; margin-bottom: 1.25rem; opacity: 0.5">
+          📋
+        </div>
+        <h3 style="color: var(--navy); margin-bottom: 0.75rem">
+          No orders yet
+        </h3>
+        <p style="margin-bottom: 2rem; font-size: 0.9rem">
+          Start by browsing our products and placing your first order.
+        </p>
+        <a href="{% url 'product_list' %}" class="btn-primary"
+          >Browse Products</a
+        >
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Quick links -->
+    <div class="grid-3" style="margin-top: 2rem">
+      <a
+        href="{% url 'product_list' %}"
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          text-decoration: none;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          transition: all 0.3s;
+          border: 1px solid transparent;
+        "
+        onmouseover="
+          this.style.borderColor = 'rgba(249,115,22,0.25)';
+          this.style.transform = 'translateY(-3px)';
+        "
+        onmouseout="
+          this.style.borderColor = 'transparent';
+          this.style.transform = 'translateY(0)';
+        "
+      >
+        <div
+          style="
+            width: 48px;
+            height: 48px;
+            background: rgba(249, 115, 22, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.4rem;
+          "
+        >
+          📦
+        </div>
+        <div>
+          <div
+            style="
+              font-family: &quot;Manrope&quot;, sans-serif;
+              font-weight: 700;
+              font-size: 0.95rem;
+              color: var(--navy);
+            "
+          >
+            Shop Products
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b">
+            Browse our catalogue
+          </div>
+        </div>
+      </a>
+
+      <a
+        href="{% url 'service_list' %}"
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          text-decoration: none;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          transition: all 0.3s;
+          border: 1px solid transparent;
+        "
+        onmouseover="
+          this.style.borderColor = 'rgba(249,115,22,0.25)';
+          this.style.transform = 'translateY(-3px)';
+        "
+        onmouseout="
+          this.style.borderColor = 'transparent';
+          this.style.transform = 'translateY(0)';
+        "
+      >
+        <div
+          style="
+            width: 48px;
+            height: 48px;
+            background: rgba(249, 115, 22, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.4rem;
+          "
+        >
+          🛠️
+        </div>
+        <div>
+          <div
+            style="
+              font-family: &quot;Manrope&quot;, sans-serif;
+              font-weight: 700;
+              font-size: 0.95rem;
+              color: var(--navy);
+            "
+          >
+            Our Services
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b">
+            Book installation or support
+          </div>
+        </div>
+      </a>
+
+      <a
+        href="{% url 'logout' %}"
+        style="
+          background: white;
+          border-radius: 20px;
+          padding: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          text-decoration: none;
+          box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+          transition: all 0.3s;
+          border: 1px solid transparent;
+        "
+        onmouseover="
+          this.style.borderColor = 'rgba(239,68,68,0.25)';
+          this.style.transform = 'translateY(-3px)';
+        "
+        onmouseout="
+          this.style.borderColor = 'transparent';
+          this.style.transform = 'translateY(0)';
+        "
+      >
+        <div
+          style="
+            width: 48px;
+            height: 48px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.4rem;
+          "
+        >
+          🚪
+        </div>
+        <div>
+          <div
+            style="
+              font-family: &quot;Manrope&quot;, sans-serif;
+              font-weight: 700;
+              font-size: 0.95rem;
+              color: var(--navy);
+            "
+          >
+            Sign Out
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b">
+            Logout of your account
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,461 @@
+{% extends 'base.html' %} 
+{% block title %}Products — VoterX Communications{% endblock %} 
+
+{% block extra_head %}
+<style>
+  .page-hero {
+    background: var(--navy);
+    padding: 5rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .filter-pill {
+    padding: 0.5rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: "Manrope", sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+    background: white;
+  }
+
+  .filter-pill:hover,
+  .filter-pill.active {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(249, 115, 22, 0.06);
+  }
+
+  .search-bar {
+    position: relative;
+    max-width: 480px;
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 50px;
+    padding: 0.85rem 1.25rem 0.85rem 3rem;
+    font-size: 0.9rem;
+    color: var(--navy);
+    font-family: "Inter", sans-serif;
+    outline: none;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .search-bar input:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+  }
+
+  .search-bar .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+  }
+
+  .product-grid-card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(15, 23, 42, 0.07);
+    transition: all 0.3s ease;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-grid-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(15, 23, 42, 0.13);
+    border-color: rgba(249, 115, 22, 0.2);
+  }
+
+  .product-grid-img {
+    height: 220px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-grid-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .product-grid-card:hover .product-grid-img img {
+    transform: scale(1.05);
+  }
+
+  .product-grid-body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-tag {
+    display: inline-block;
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--orange);
+    border-radius: 6px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: "Manrope", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .pag-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .pag-btn:hover,
+  .pag-btn.active {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(249, 115, 22, 0.07);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 6rem 2rem;
+    color: #94a3b8;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<!-- Page Hero -->
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="container" style="position: relative; z-index: 2">
+    <div class="badge badge-white">Product Catalogue</div>
+    <h1
+      style="
+        color: white;
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        margin: 0 0 1rem;
+      "
+    >
+      ICT Products &amp; <span style="color: var(--orange)">Equipment</span>
+    </h1>
+    <p
+      style="
+        color: rgba(255, 255, 255, 0.6);
+        max-width: 560px;
+        line-height: 1.75;
+        margin: 0;
+      "
+    >
+      Routers, switches, computers, CCTV cameras, cables, and everything your
+      business needs — sourced from top brands and backed by our warranty.
+    </p>
+  </div>
+</section>
+
+<!-- Filters + Products -->
+<section class="section-pad section-light">
+  <div class="container">
+    <!-- Toolbar -->
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      "
+    >
+      <!-- Category pills -->
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap">
+        <a
+          href="{% url 'product_list' %}"
+          class="filter-pill {% if not request.GET.category %}active{% endif %}"
+          >All</a
+        >
+        {% for category in categories %}
+        <a
+          href="{% url 'product_list' %}?category={{ category.slug }}"
+          class="filter-pill {% if request.GET.category == category.slug %}active{% endif %}"
+        >
+          {{ category.name }}
+        </a>
+        {% endfor %}
+      </div>
+
+      <!-- Search -->
+      <form method="get" action="{% url 'product_list' %}">
+        <div class="search-bar">
+          <div class="search-icon">
+            <svg
+              width="18"
+              height="18"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            name="q"
+            placeholder="Search products…"
+            value="{{ request.GET.q }}"
+          />
+          {% if request.GET.category %}
+          <input
+            type="hidden"
+            name="category"
+            value="{{ request.GET.category }}"
+          />
+          {% endif %}
+        </div>
+      </form>
+    </div>
+
+    <!-- Results count -->
+    {% if products %}
+    <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 2rem">
+      Showing <strong>{{ products|length }}</strong> product{{
+      products|length|pluralize }} {% if request.GET.q %}for "<strong
+        >{{ request.GET.q }}</strong
+      >"{% endif %}
+    </p>
+
+    <!-- Products Grid -->
+    <div class="grid-4" style="grid-template-columns: repeat(3, 1fr)">
+      {% for product in products %}
+      <div class="product-grid-card">
+        <div class="product-grid-img">
+          {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+          {% else %}
+          <div style="font-size: 5rem; opacity: 0.3">
+            {% if 'router' in product.name|lower %}📡 {% elif 'camera' in
+            product.name|lower or 'cctv' in product.name|lower %}📷 {% elif
+            'laptop' in product.name|lower %}💻 {% elif 'desktop' in
+            product.name|lower or 'computer' in product.name|lower %}🖥️ {% elif
+            'cable' in product.name|lower or 'rj' in product.name|lower %}🔌 {%
+            elif 'switch' in product.name|lower %}🔀 {% elif 'ups' in
+            product.name|lower %}🔋 {% elif 'printer' in product.name|lower %}🖨️
+            {% else %}📦 {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Category tag overlay -->
+          <div style="position: absolute; top: 1rem; left: 1rem">
+            <span class="product-tag">{{ product.category.name }}</span>
+          </div>
+
+          <!-- Quick actions overlay on hover -->
+          <div
+            style="
+              position: absolute;
+              inset: 0;
+              background: rgba(15, 23, 42, 0.45);
+              opacity: 0;
+              transition: opacity 0.3s;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+            class="hover-overlay"
+          >
+            <a
+              href="{% url 'product_detail' product.slug %}"
+              style="
+                background: white;
+                color: var(--navy);
+                padding: 0.6rem 1.25rem;
+                border-radius: 50px;
+                font-weight: 700;
+                font-size: 0.8rem;
+                text-decoration: none;
+                font-family: &quot;Manrope&quot;, sans-serif;
+              "
+            >
+              Quick View
+            </a>
+          </div>
+        </div>
+
+        <div class="product-grid-body">
+          <span class="product-tag">{{ product.category.name }}</span>
+          <h3
+            style="
+              font-size: 1rem;
+              margin: 0 0 0.5rem;
+              color: var(--navy);
+              line-height: 1.35;
+            "
+          >
+            {{ product.name }}
+          </h3>
+          <p
+            style="
+              color: #64748b;
+              font-size: 0.85rem;
+              line-height: 1.6;
+              margin: 0 0 auto;
+              flex: 1;
+              padding-bottom: 1.25rem;
+            "
+          >
+            {{ product.description|truncatewords:15 }}
+          </p>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding-top: 1rem;
+              border-top: 1px solid #f1f5f9;
+              margin-top: 1rem;
+            "
+          >
+            <div
+              style="
+                font-family: &quot;Manrope&quot;, sans-serif;
+                font-weight: 900;
+                font-size: 1.25rem;
+                color: var(--orange);
+              "
+            >
+              KES {{ product.price|floatformat:0 }}
+            </div>
+            <div style="display: flex; gap: 0.5rem">
+              <a
+                href="{% url 'product_detail' product.slug %}"
+                style="
+                  width: 36px;
+                  height: 36px;
+                  border: 2px solid #e2e8f0;
+                  border-radius: 10px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  text-decoration: none;
+                  color: #64748b;
+                  transition: all 0.2s;
+                "
+                onmouseover="
+                  this.style.borderColor = 'var(--orange)';
+                  this.style.color = 'var(--orange)';
+                "
+                onmouseout="
+                  this.style.borderColor = '#E2E8F0';
+                  this.style.color = '#64748B';
+                "
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="{% url 'add_to_cart' product.id %}"
+                class="btn-primary"
+                style="
+                  padding: 0 1rem;
+                  height: 36px;
+                  display: flex;
+                  align-items: center;
+                  font-size: 0.8rem;
+                "
+              >
+                + Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div style="font-size: 4rem; margin-bottom: 1rem">🔍</div>
+      <h3 style="color: var(--navy); font-size: 1.5rem; margin-bottom: 0.75rem">
+        No products found
+      </h3>
+      <p style="margin-bottom: 2rem">
+        {% if request.GET.q %}No products match "{{ request.GET.q }}"{% else
+        %}No products in this category yet{% endif %}
+      </p>
+      <a href="{% url 'product_list' %}" class="btn-primary"
+        >View All Products</a
+      >
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  // Hover overlay effect
+  document.querySelectorAll(".product-grid-card").forEach((card) => {
+    const overlay = card.querySelector(".hover-overlay");
+    if (!overlay) return;
+    card.addEventListener("mouseenter", () => (overlay.style.opacity = "1"));
+    card.addEventListener("mouseleave", () => (overlay.style.opacity = "0"));
+  });
+</script>
+{% endblock %}

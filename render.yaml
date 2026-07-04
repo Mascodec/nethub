@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: voterx
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn voterx.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        sync: false

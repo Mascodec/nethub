@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} — VoterX Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+  .admin-wrap { min-height:calc(100vh - 72px); background:var(--navy); padding:3rem 2rem; max-width:1280px; margin:0 auto; }
+  .detail-grid { display:grid; grid-template-columns:1fr 360px; gap:2rem; align-items:start; }
+  .card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:2rem; margin-bottom:1.5rem; }
+  .card h3 { font-family:'Manrope',sans-serif; font-size:1rem; font-weight:700; color:white; margin:0 0 1.5rem; }
+  .info-row { display:flex; justify-content:space-between; padding:0.75rem 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.875rem; }
+  .info-row:last-child { border-bottom:none; }
+  .info-label { color:rgba(255,255,255,0.35); }
+  .info-value { color:white; font-weight:600; }
+  .status-badge { display:inline-flex; align-items:center; padding:0.3rem 0.85rem; border-radius:50px; font-size:0.72rem; font-weight:700; text-transform:uppercase; }
+  .status-pending    { background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); color:var(--orange); }
+  .status-confirmed  { background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; }
+  .status-completed  { background:rgba(34,197,94,0.12);  border:1px solid rgba(34,197,94,0.3);  color:#4ade80; }
+  .status-cancelled  { background:rgba(239,68,68,0.12);  border:1px solid rgba(239,68,68,0.3);  color:#f87171; }
+  .status-processing { background:rgba(139,92,246,0.12); border:1px solid rgba(139,92,246,0.3); color:#a78bfa; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrap">
+
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2.5rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,0.07); flex-wrap:wrap; gap:1rem;">
+    <div>
+      <a href="{% url 'admin_orders' %}" style="color:rgba(255,255,255,0.4); font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin-bottom:0.5rem;">
+        ← Back to Orders
+      </a>
+      <h1 style="font-family:'Manrope',sans-serif; font-size:1.8rem; font-weight:900; color:white; margin:0;">
+        Order <span style="color:var(--orange);">#{{ order.id }}</span>
+      </h1>
+    </div>
+    <span class="status-badge status-{{ order.status }}" style="font-size:0.85rem; padding:0.5rem 1.25rem;">{{ order.status|title }}</span>
+  </div>
+
+  <div class="detail-grid">
+
+    <!-- Left -->
+    <div>
+      <!-- Customer info -->
+      <div class="card">
+        <h3>👤 Customer Information</h3>
+        <div class="info-row">
+          <span class="info-label">Name</span>
+          <span class="info-value">{{ order.customer.get_full_name|default:"—" }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ order.customer.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ order.customer.phone|default:"—" }}</span>
+        </div>
+      </div>
+
+      <!-- Order items -->
+      <div class="card">
+        <h3>📦 Order Items</h3>
+        {% for item in order.items.all %}
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.75rem 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div>
+            <div style="color:white; font-weight:600; font-size:0.875rem;">{{ item.product.name }}</div>
+            <div style="color:rgba(255,255,255,0.35); font-size:0.78rem;">Qty: {{ item.quantity }} × KES {{ item.unit_price|floatformat:0 }}</div>
+          </div>
+          <div style="color:var(--orange); font-weight:700; font-family:'Manrope',sans-serif;">KES {{ item.subtotal|floatformat:0 }}</div>
+        </div>
+        {% endfor %}
+        <div style="display:flex; justify-content:space-between; padding-top:1rem; font-family:'Manrope',sans-serif; font-weight:900; font-size:1.2rem;">
+          <span style="color:rgba(255,255,255,0.5);">Total</span>
+          <span style="color:var(--orange);">KES {{ order.total_amount|floatformat:0 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Update form -->
+    <div>
+      <div class="card">
+        <h3>⚙ Update Order</h3>
+        <form method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="form-label" style="color:rgba(255,255,255,0.5);">Order Status</label>
+            <select name="status" class="form-input">
+              {% for val, label in order.STATUS_CHOICES %}
+              <option value="{{ val }}" {% if order.status == val %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          {% if order.needs_installation %}
+          <div style="background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.2); border-radius:12px; padding:1rem; margin-bottom:1.25rem;">
+            <div style="color:var(--orange); font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">⚙ Installation Requested</div>
+            <div style="color:rgba(255,255,255,0.5); font-size:0.82rem;">This order requires a technician assignment.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="color:rgba(255,255,255,0.5);">Assign Technician</label>
+            <select name="technician" class="form-input">
+              <option value="">— Select technician —</option>
+              {% for tech in technicians %}
+              <option value="{{ tech.id }}">{{ tech.get_full_name|default:tech.email }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+
+          <button type="submit" class="btn-primary" style="width:100%; text-align:center; padding:0.9rem; border:none; cursor:pointer; font-size:0.95rem;">
+            Save Changes →
+          </button>
+        </form>
+      </div>
+
+      <!-- Order meta -->
+      <div class="card">
+        <h3>📋 Order Details</h3>
+        <div class="info-row">
+          <span class="info-label">Order Date</span>
+          <span class="info-value">{{ order.created_at|date:"d M Y, H:i" }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Installation</span>
+          <span class="info-value">{% if order.needs_installation %}Yes ⚙{% else %}No{% endif %}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Payment</span>
+          <span class="info-value">{{ order.payment_status|default:"Pending"|title }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

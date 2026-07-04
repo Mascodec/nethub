@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders — VoterX Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+  .admin-wrap { min-height:calc(100vh - 72px); background:var(--navy); padding:3rem 2rem; max-width:1280px; margin:0 auto; }
+  .admin-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2.5rem; padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,0.07); flex-wrap:wrap; gap:1rem; }
+  .admin-header h1 { font-family:'Manrope',sans-serif; font-size:1.8rem; font-weight:900; color:white; }
+  .admin-nav { display:flex; gap:0.75rem; flex-wrap:wrap; }
+  .admin-nav a { padding:0.55rem 1.25rem; border-radius:50px; font-size:0.82rem; font-weight:700; font-family:'Manrope',sans-serif; text-decoration:none; border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.6); transition:all 0.2s; }
+  .admin-nav a:hover, .admin-nav a.active { background:var(--orange); border-color:var(--orange); color:white; }
+  .filter-bar { display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:2rem; }
+  .filter-pill { padding:0.45rem 1.1rem; border-radius:50px; font-size:0.8rem; font-weight:700; font-family:'Manrope',sans-serif; text-decoration:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.5); transition:all 0.2s; }
+  .filter-pill:hover, .filter-pill.active { background:var(--orange); border-color:var(--orange); color:white; }
+  .table-wrap { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:20px; overflow:hidden; }
+  .admin-table { width:100%; border-collapse:collapse; }
+  .admin-table thead tr { border-bottom:1px solid rgba(255,255,255,0.07); }
+  .admin-table th { padding:1rem 1.5rem; text-align:left; font-size:0.72rem; font-weight:700; color:rgba(255,255,255,0.3); letter-spacing:0.1em; text-transform:uppercase; }
+  .admin-table tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.2s; }
+  .admin-table tbody tr:last-child { border-bottom:none; }
+  .admin-table tbody tr:hover { background:rgba(249,115,22,0.04); }
+  .admin-table td { padding:1rem 1.5rem; color:rgba(255,255,255,0.6); font-size:0.875rem; }
+  .status-badge { display:inline-flex; align-items:center; padding:0.3rem 0.85rem; border-radius:50px; font-size:0.72rem; font-weight:700; text-transform:uppercase; }
+  .status-pending    { background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); color:var(--orange); }
+  .status-confirmed  { background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; }
+  .status-completed  { background:rgba(34,197,94,0.12);  border:1px solid rgba(34,197,94,0.3);  color:#4ade80; }
+  .status-cancelled  { background:rgba(239,68,68,0.12);  border:1px solid rgba(239,68,68,0.3);  color:#f87171; }
+  .status-processing { background:rgba(139,92,246,0.12); border:1px solid rgba(139,92,246,0.3); color:#a78bfa; }
+  .action-btn { padding:0.4rem 1rem; border-radius:8px; font-size:0.78rem; font-weight:700; text-decoration:none; font-family:'Manrope',sans-serif; transition:all 0.2s; background:rgba(249,115,22,0.15); color:var(--orange); border:1px solid rgba(249,115,22,0.3); }
+  .action-btn:hover { background:var(--orange); color:white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrap">
+  <div class="admin-header">
+    <div>
+      <h1>Manage Orders</h1>
+      <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; margin-top:0.25rem;">Update statuses and assign technicians</p>
+    </div>
+    <div class="admin-nav">
+      <a href="{% url 'admin_dashboard' %}">Overview</a>
+      <a href="{% url 'admin_orders' %}" class="active">Orders</a>
+      <a href="{% url 'admin_technicians' %}">Technicians</a>
+    </div>
+  </div>
+
+  <!-- Status filters -->
+  <div class="filter-bar">
+    <a href="{% url 'admin_orders' %}" class="filter-pill {% if not status_filter %}active{% endif %}">All</a>
+    <a href="?status=pending"    class="filter-pill {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+    <a href="?status=confirmed"  class="filter-pill {% if status_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
+    <a href="?status=processing" class="filter-pill {% if status_filter == 'processing' %}active{% endif %}">Processing</a>
+    <a href="?status=completed"  class="filter-pill {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
+    <a href="?status=cancelled"  class="filter-pill {% if status_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Customer</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Installation</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td style="color:white; font-weight:700; font-family:'Manrope',sans-serif;">#{{ order.id }}</td>
+          <td>
+            <div style="color:white; font-weight:600; font-size:0.875rem;">{{ order.customer.get_full_name|default:"—" }}</div>
+            <div style="color:rgba(255,255,255,0.35); font-size:0.78rem;">{{ order.customer.email }}</div>
+          </td>
+          <td style="color:var(--orange); font-weight:700; font-family:'Manrope',sans-serif;">KES {{ order.total_amount|floatformat:0 }}</td>
+          <td><span class="status-badge status-{{ order.status }}">{{ order.status|title }}</span></td>
+          <td>
+            {% if order.needs_installation %}
+            <span style="color:var(--orange); font-size:0.78rem; font-weight:700; background:rgba(249,115,22,0.1); padding:0.2rem 0.6rem; border-radius:6px;">⚙ Yes</span>
+            {% else %}
+            <span style="color:rgba(255,255,255,0.2);">—</span>
+            {% endif %}
+          </td>
+          <td>{{ order.created_at|date:"M d, Y" }}</td>
+          <td><a href="{% url 'admin_order_detail' order.id %}" class="action-btn">Manage →</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; padding:3rem; color:rgba(255,255,255,0.2);">No orders found</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

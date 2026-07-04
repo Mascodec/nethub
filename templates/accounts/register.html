@@ -1,0 +1,159 @@
+{% extends 'base.html' %} {% block title %}Create Account — VoterX
+Communications{% endblock %} {% block content %}
+<div
+  style="
+    min-height: calc(100vh - 72px);
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  "
+>
+  <div
+    style="
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+    "
+  ></div>
+  <div
+    style="
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(249, 115, 22, 0.1) 0%,
+        transparent 70%
+      );
+      bottom: -100px;
+      left: -100px;
+      pointer-events: none;
+    "
+  ></div>
+
+  <div style="position: relative; z-index: 2; width: 100%; max-width: 480px">
+    <!-- Logo -->
+    <div style="text-align: center; margin-bottom: 2rem">
+      <a
+        href="{% url 'home' %}"
+        style="
+          font-family: &quot;Manrope&quot;, sans-serif;
+          font-weight: 900;
+          font-size: 1.75rem;
+          color: white;
+          text-decoration: none;
+        "
+      >
+        <span style="color: var(--orange)">●</span> VoterX
+      </a>
+    </div>
+
+    <div
+      style="
+        background: white;
+        border-radius: var(--radius);
+        padding: 2.5rem;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+      "
+    >
+      <h1 style="font-size: 1.75rem; margin: 0 0 0.5rem; color: var(--navy)">
+        Create your account
+      </h1>
+      <p style="color: #64748b; font-size: 0.9rem; margin: 0 0 2rem">
+        Join VoterX Communications today
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="grid-2" style="gap: 1rem">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input
+              type="text"
+              name="name"
+              class="form-input"
+              placeholder="John Doe"
+              required
+              autofocus
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input
+              type="tel"
+              name="phone"
+              class="form-input"
+              placeholder="+254 700 000 000"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input
+            type="email"
+            name="email"
+            class="form-input"
+            placeholder="you@company.co.ke"
+            required
+          />
+        </div>
+        <div class="form-group" style="margin-bottom: 1.75rem">
+          <label class="form-label">Password</label>
+          <input
+            type="password"
+            name="password"
+            class="form-input"
+            placeholder="Create a strong password"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary"
+          style="
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+          "
+        >
+          Create Account →
+        </button>
+      </form>
+
+      <div
+        style="
+          text-align: center;
+          margin-top: 1.75rem;
+          color: #64748b;
+          font-size: 0.875rem;
+        "
+      >
+        Already have an account?
+        <a
+          href="{% url 'login' %}"
+          style="
+            color: var(--orange);
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+          "
+          >Sign in</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
