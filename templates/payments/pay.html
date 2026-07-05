@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Pay with M-Pesa — VoterX Communications{% endblock %}
+
+{% block content %}
+<section class="section-pad" style="background: var(--bg); min-height: 70vh;">
+  <div class="container" style="max-width: 700px; margin: 0 auto;">
+    <div class="badge badge-white" style="margin-bottom: 1rem;">Secure Payment</div>
+    <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.75rem;">Pay for Order #{{ booking.id }}</h1>
+    <p style="color: #64748b; margin-bottom: 2rem;">Enter your M-Pesa phone number to receive the STK push prompt.</p>
+
+    {% if error %}
+    <div style="background: #fef2f2; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <div style="background: white; border-radius: var(--radius); padding: 2rem; box-shadow: 0 4px 24px rgba(15, 23, 42, 0.09);">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+        <div>
+          <div style="color: #94a3b8; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;">Amount</div>
+          <div style="font-size: 1.5rem; font-weight: 800; color: var(--orange);">KES {{ booking.total_amount|floatformat:0 }}</div>
+        </div>
+        <div>
+          <div style="color: #94a3b8; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;">Order</div>
+          <div style="font-size: 1rem; font-weight: 700; color: var(--navy);">#{{ booking.id }}</div>
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <label for="phone_number" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--navy);">Phone Number</label>
+        <input
+          id="phone_number"
+          name="phone_number"
+          type="tel"
+          placeholder="0712345678"
+          required
+          style="width: 100%; padding: 0.95rem 1rem; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 1rem;"
+        />
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 0.95rem 1rem;">Send M-Pesa Prompt</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

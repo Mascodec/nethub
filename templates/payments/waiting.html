@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Waiting for M-Pesa — VoterX Communications{% endblock %}
+
+{% block content %}
+<section class="section-pad" style="background: var(--bg); min-height: 70vh;">
+  <div class="container" style="max-width: 700px; margin: 0 auto; text-align: center;">
+    <div class="badge badge-white" style="margin-bottom: 1rem;">Payment Pending</div>
+    <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.75rem;">Check your phone</h1>
+    <p style="color: #64748b; margin-bottom: 2rem;">An M-Pesa STK push has been sent to {{ payment.phone_number }}. Complete the prompt to confirm payment.</p>
+
+    <div style="background: white; border-radius: var(--radius); padding: 2rem; box-shadow: 0 4px 24px rgba(15, 23, 42, 0.09);">
+      <p style="margin-bottom: 0.5rem;"><strong>Payment ID:</strong> {{ payment.id }}</p>
+      <p style="margin-bottom: 0.5rem;"><strong>Amount:</strong> KES {{ payment.amount }}</p>
+      <p><strong>Status:</strong> {{ payment.status|title }}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

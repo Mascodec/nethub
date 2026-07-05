@@ -224,9 +224,15 @@
       style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap"
     >
       <a
-        href="{% url 'dashboard' %}"
+        href="{% url 'payments:pay' order.id %}"
         class="btn-primary"
         style="padding: 0.9rem 2rem"
+        >Pay Now with M-Pesa</a
+      >
+      <a
+        href="{% url 'dashboard' %}"
+        class="btn-outline"
+        style="padding: 0.9rem 2rem; color: var(--navy); border-color: #e2e8f0"
         >View My Orders</a
       >
       <a
