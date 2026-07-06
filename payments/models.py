@@ -9,9 +9,14 @@ class Payment(models.Model):
         SUCCESS = 'success', 'Success'
         FAILED = 'failed', 'Failed'
 
+    class Method(models.TextChoices):
+        MPESA = 'mpesa', 'M-Pesa'
+        CASH = 'cash', 'Cash'
+
     booking = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15, blank=True)
     amount = models.DecimalField(max_digits=9, decimal_places=2)
+    payment_method = models.CharField(max_length=10, choices=Method.choices, default=Method.MPESA)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
     merchant_request_id = models.CharField(max_length=100, blank=True)
     checkout_request_id = models.CharField(max_length=100, blank=True, db_index=True)

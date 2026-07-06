@@ -68,8 +68,13 @@ def admin_order_detail(request, order_id):
 
         if new_status:
             order.status = new_status
+
         if technician_id:
-            order.service_id = technician_id
+            technician = User.objects.filter(id=technician_id, role='technician').first()
+            order.assigned_technician = technician
+        else:
+            order.assigned_technician = None
+
         order.save()
 
         messages.success(request, f'Order #{order.id} updated successfully.')

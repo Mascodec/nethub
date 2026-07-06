@@ -7,7 +7,7 @@
   <div class="container" style="max-width: 700px; margin: 0 auto;">
     <div class="badge badge-white" style="margin-bottom: 1rem;">Secure Payment</div>
     <h1 style="font-size: 2rem; color: var(--navy); margin-bottom: 0.75rem;">Pay for Order #{{ booking.id }}</h1>
-    <p style="color: #64748b; margin-bottom: 2rem;">Enter your M-Pesa phone number to receive the STK push prompt.</p>
+    <p style="color: #64748b; margin-bottom: 2rem;">Choose how you would like to complete this payment.</p>
 
     {% if error %}
     <div style="background: #fef2f2; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem;">
@@ -29,16 +29,28 @@
 
       <form method="post">
         {% csrf_token %}
-        <label for="phone_number" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--navy);">Phone Number</label>
-        <input
-          id="phone_number"
-          name="phone_number"
-          type="tel"
-          placeholder="0712345678"
-          required
-          style="width: 100%; padding: 0.95rem 1rem; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 1rem;"
-        />
-        <button type="submit" class="btn-primary" style="width: 100%; padding: 0.95rem 1rem;">Send M-Pesa Prompt</button>
+        <div style="display: grid; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <label style="display:flex; align-items:center; gap:0.75rem; padding:0.95rem 1rem; border:1px solid #e2e8f0; border-radius:12px; cursor:pointer;">
+            <input type="radio" name="payment_method" value="mpesa" checked>
+            <span><strong>M-Pesa</strong><br><span style="color:#64748b; font-size:0.85rem;">Send an STK push prompt to your phone.</span></span>
+          </label>
+          <label style="display:flex; align-items:center; gap:0.75rem; padding:0.95rem 1rem; border:1px solid #e2e8f0; border-radius:12px; cursor:pointer;">
+            <input type="radio" name="payment_method" value="cash">
+            <span><strong>Cash</strong><br><span style="color:#64748b; font-size:0.85rem;">Pay in cash when your order is delivered.</span></span>
+          </label>
+        </div>
+
+        <div id="mpesa-phone-block">
+          <label for="phone_number" style="display: block; margin-bottom: 0.5rem; font-weight: 700; color: var(--navy);">Phone Number</label>
+          <input
+            id="phone_number"
+            name="phone_number"
+            type="tel"
+            placeholder="0712345678"
+            style="width: 100%; padding: 0.95rem 1rem; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 1rem;"
+          />
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 0.95rem 1rem;">Continue</button>
       </form>
     </div>
   </div>

@@ -20,11 +20,29 @@ def normalize_phone(raw):
 def pay_for_booking(request, booking_id):
     booking = get_object_or_404(Order, pk=booking_id, customer=request.user)
     if request.method == 'POST':
+        payment_method = request.POST.get('payment_method', Payment.Method.MPESA)
+        if payment_method == Payment.Method.CASH:
+            payment = Payment.objects.create(
+                booking=booking,
+                amount=booking.total_amount,
+                payment_method=payment_method,
+                status=Payment.Status.SUCCESS,
+                result_desc='Cash payment selected at checkout.'
+            )
+            booking.status = 'confirmed'
+            booking.save()
+            return render(request, 'payments/cash_confirmation.html', {'booking': booking, 'payment': payment})
+
         phone = normalize_phone(request.POST.get('phone_number', ''))
         if not re.match(r'^254(7|1)\d{8}$', phone):
             return render(request, 'payments/pay.html', {'booking': booking, 'error': 'Invalid phone number'})
 
-        payment = Payment.objects.create(booking=booking, phone_number=phone, amount=booking.total_amount)
+        payment = Payment.objects.create(
+            booking=booking,
+            phone_number=phone,
+            amount=booking.total_amount,
+            payment_method=payment_method,
+        )
         try:
             resp = stk_push(phone, booking.total_amount, f"BOOKING{booking.id}")
         except MpesaError as e:
